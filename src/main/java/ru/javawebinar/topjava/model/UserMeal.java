@@ -17,11 +17,17 @@ public class UserMeal {
         this.calories = calories;
     }
 
-    public LocalDateTime getDateTime() { return dateTime; }
+    public LocalDateTime getDateTime() {
+        return dateTime;
+    }
 
-    public LocalDate getDate() { return dateTime.toLocalDate(); }
+    public LocalDate getDate() {
+        return dateTime.toLocalDate();
+    }
 
-    public LocalTime getTime() { return dateTime.toLocalTime(); }
+    public LocalTime getTime() {
+        return dateTime.toLocalTime();
+    }
 
     public String getDescription() {
         return description;

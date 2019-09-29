@@ -29,21 +29,18 @@ public class UserMealsUtil {
 
     public static List<UserMealWithExceed> getFilteredWithExceededCycle(List<UserMeal> mealList, LocalTime startTime, LocalTime endTime, int caloriesPerDay) {
         Map<LocalDate, Integer> totalCaloriesPerDay = new HashMap<>();
-        List<UserMeal> filteredMeals = new ArrayList<>();
 
         for (UserMeal meal : mealList) {
             Integer caloriesThisDay = totalCaloriesPerDay.getOrDefault(meal.getDate(), 0) + meal.getCalories();
             totalCaloriesPerDay.put(meal.getDate(), caloriesThisDay);
-
-            if (TimeUtil.isBetween(meal.getTime(), startTime, endTime)) {
-                filteredMeals.add(meal);
-            }
         }
 
         List<UserMealWithExceed> filteredWithExceeded = new ArrayList<>();
-        for (UserMeal filteredMeal : filteredMeals) {
-            filteredWithExceeded.add(userMealToUserMealWithExceed(filteredMeal,
-                    totalCaloriesPerDay.get(filteredMeal.getDateTime().toLocalDate()) > caloriesPerDay));
+        for (UserMeal meal : mealList) {
+            if (TimeUtil.isBetween(meal.getTime(), startTime, endTime)) {
+                filteredWithExceeded.add(userMealToUserMealWithExceed(meal,
+                        totalCaloriesPerDay.get(meal.getDateTime().toLocalDate()) > caloriesPerDay));
+            }
         }
 
         return filteredWithExceeded;
@@ -55,8 +52,8 @@ public class UserMealsUtil {
                 .collect(Collectors.groupingBy(UserMeal::getDate, Collectors.summingInt(UserMeal::getCalories)));
 
         List<UserMealWithExceed> filteredMeals = mealList.stream()
-                .filter((x) -> TimeUtil.isBetween(x.getDateTime().toLocalTime(), startTime, endTime))
-                .map((x) -> userMealToUserMealWithExceed(x, totalCaloriesPerDay.get(x.getDate()) > caloriesPerDay))
+                .filter(m -> TimeUtil.isBetween(m.getDateTime().toLocalTime(), startTime, endTime))
+                .map(m -> userMealToUserMealWithExceed(m, totalCaloriesPerDay.get(m.getDate()) > caloriesPerDay))
                 .collect(Collectors.toList());
 
         return filteredMeals;
