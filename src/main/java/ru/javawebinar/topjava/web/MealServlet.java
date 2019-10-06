@@ -1,5 +1,7 @@
 package ru.javawebinar.topjava.web;
 
+import ru.javawebinar.topjava.dao.MealDAO;
+import ru.javawebinar.topjava.dao.MealDAOImpl;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.util.MealsUtil;
 
@@ -10,24 +12,58 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.time.Month;
-import java.util.Arrays;
-import java.util.List;
 
 public class MealServlet extends HttpServlet {
+    private static String INSERT_OR_EDIT = "/meal.jsp";
+    private static String MEAL_LIST = "/meals.jsp";
+    private MealDAO meals;
+
+    public MealServlet() {
+        super();
+        meals = new MealDAOImpl();
+    }
+
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        List<Meal> meals = Arrays.asList(
-                new Meal(LocalDateTime.of(2015, Month.MAY, 30, 10, 0), "Завтрак", 500),
-                new Meal(LocalDateTime.of(2015, Month.MAY, 30, 13, 0), "Обед", 1000),
-                new Meal(LocalDateTime.of(2015, Month.MAY, 30, 20, 0), "Ужин", 500),
-                new Meal(LocalDateTime.of(2015, Month.MAY, 31, 10, 0), "Завтрак", 1000),
-                new Meal(LocalDateTime.of(2015, Month.MAY, 31, 13, 0), "Обед", 500),
-                new Meal(LocalDateTime.of(2015, Month.MAY, 31, 20, 0), "Ужин", 510)
-        );
+        String action = request.getParameter("action");
 
-        int maxCalories = 2000;
+        if (action != null) {
+            if (action.equalsIgnoreCase("delete")) {
+                int mealId = Integer.parseInt(request.getParameter("mealId"));
+                meals.delete(mealId);
+                response.sendRedirect("meals");
 
-        request.setAttribute("mealList", MealsUtil.getFiltered(meals, LocalTime.MIN, LocalTime.MAX, maxCalories));
-        request.getRequestDispatcher("/meals.jsp").forward(request, response);
+            } else if (action.equalsIgnoreCase("insert")) {
+                request.setAttribute("mealList", MealsUtil.getFiltered(meals.getAll(), LocalTime.MIN, LocalTime.MAX, 2000));
+                request.getRequestDispatcher(INSERT_OR_EDIT).forward(request, response);
+
+            } else if (action.equalsIgnoreCase("edit")) {
+                request.setAttribute("meal", meals.get(Integer.parseInt(request.getParameter("mealId"))));
+                request.setAttribute("mealList", MealsUtil.getFiltered(meals.getAll(), LocalTime.MIN, LocalTime.MAX, 2000));
+                request.getRequestDispatcher(INSERT_OR_EDIT).forward(request, response);
+            }
+        } else {
+            request.setAttribute("mealList", MealsUtil.getFiltered(meals.getAll(), LocalTime.MIN, LocalTime.MAX, 2000));
+            request.getRequestDispatcher(MEAL_LIST).forward(request, response);
+        }
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        request.setCharacterEncoding("UTF-8");
+
+        Meal newMeal = new Meal(LocalDateTime.parse(request.getParameter("dateTime")),
+                request.getParameter("description"),
+                Integer.parseInt(request.getParameter("calories")));
+
+        String mealId = request.getParameter("mealId");
+        if (mealId == null || mealId.isEmpty()) {
+            meals.add(newMeal);
+        } else {
+            newMeal.setId(Integer.parseInt(mealId));
+            meals.update(Integer.parseInt(mealId), newMeal);
+        }
+
+        request.setAttribute("mealList", MealsUtil.getFiltered(meals.getAll(), LocalTime.MIN, LocalTime.MAX, 2000));
+        request.getRequestDispatcher(MEAL_LIST).forward(request, response);
     }
 }
