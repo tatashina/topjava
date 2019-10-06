@@ -25,12 +25,9 @@ public class MealServlet extends HttpServlet {
                 new Meal(LocalDateTime.of(2015, Month.MAY, 31, 20, 0), "Ужин", 510)
         );
 
-        LocalTime startTime = LocalTime.of(0, 0);
-        LocalTime endTime = LocalTime.of(23, 59);
         int maxCalories = 2000;
 
-        request.setAttribute("mealList", MealsUtil.getFiltered(meals, startTime, endTime, maxCalories));
-        request.setAttribute("maxCalories", maxCalories);
+        request.setAttribute("mealList", MealsUtil.getFiltered(meals, LocalTime.MIN, LocalTime.MAX, maxCalories));
         request.getRequestDispatcher("/meals.jsp").forward(request, response);
     }
 }
