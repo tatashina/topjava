@@ -10,13 +10,13 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public final class MealDAOImpl implements MealDAO {
+public final class MemoryMealDAOImpl implements MealDAO {
 
-    private static AtomicInteger id = new AtomicInteger(0);
+    private AtomicInteger id = new AtomicInteger(0);
 
-    private static Map<Integer, Meal> meals = new ConcurrentHashMap<>();
+    private Map<Integer, Meal> meals = new ConcurrentHashMap<>();
 
-    public MealDAOImpl() {
+    public MemoryMealDAOImpl() {
         add(new Meal(LocalDateTime.of(2015, Month.MAY, 30, 10, 0), "Завтрак", 500));
         add(new Meal(LocalDateTime.of(2015, Month.MAY, 30, 13, 0), "Обед", 1000));
         add(new Meal(LocalDateTime.of(2015, Month.MAY, 30, 20, 0), "Ужин", 500));

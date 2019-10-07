@@ -1,10 +1,11 @@
 package ru.javawebinar.topjava.web;
 
 import ru.javawebinar.topjava.dao.MealDAO;
-import ru.javawebinar.topjava.dao.MealDAOImpl;
+import ru.javawebinar.topjava.dao.MemoryMealDAOImpl;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.util.MealsUtil;
 
+import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -18,32 +19,31 @@ public class MealServlet extends HttpServlet {
     private static String MEAL_LIST = "/meals.jsp";
     private MealDAO meals;
 
-    public MealServlet() {
-        super();
-        meals = new MealDAOImpl();
+    @Override
+    public void init(ServletConfig config) throws ServletException {
+        super.init(config);
+        meals = new MemoryMealDAOImpl();
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String action = request.getParameter("action");
 
-        if (action != null) {
-            if (action.equalsIgnoreCase("delete")) {
+        switch (action == null ? "" : action) {
+            case "delete":
                 int mealId = Integer.parseInt(request.getParameter("mealId"));
                 meals.delete(mealId);
                 response.sendRedirect("meals");
-
-            } else if (action.equalsIgnoreCase("insert")) {
-                request.setAttribute("mealList", MealsUtil.getFiltered(meals.getAll(), LocalTime.MIN, LocalTime.MAX, 2000));
-                request.getRequestDispatcher(INSERT_OR_EDIT).forward(request, response);
-
-            } else if (action.equalsIgnoreCase("edit")) {
+                break;
+            case "insert":
+                setAttributeMealsAndForward(request, response, meals, INSERT_OR_EDIT);
+                break;
+            case "edit":
                 request.setAttribute("meal", meals.get(Integer.parseInt(request.getParameter("mealId"))));
-                request.setAttribute("mealList", MealsUtil.getFiltered(meals.getAll(), LocalTime.MIN, LocalTime.MAX, 2000));
-                request.getRequestDispatcher(INSERT_OR_EDIT).forward(request, response);
-            }
-        } else {
-            request.setAttribute("mealList", MealsUtil.getFiltered(meals.getAll(), LocalTime.MIN, LocalTime.MAX, 2000));
-            request.getRequestDispatcher(MEAL_LIST).forward(request, response);
+                setAttributeMealsAndForward(request, response, meals, INSERT_OR_EDIT);
+                break;
+            default:
+                setAttributeMealsAndForward(request, response, meals, MEAL_LIST);
+                break;
         }
     }
 
@@ -63,7 +63,11 @@ public class MealServlet extends HttpServlet {
             meals.update(Integer.parseInt(mealId), newMeal);
         }
 
+        setAttributeMealsAndForward(request, response, meals, MEAL_LIST);
+    }
+
+    private void setAttributeMealsAndForward(HttpServletRequest request, HttpServletResponse response, MealDAO meals, String forwardTo) throws ServletException, IOException {
         request.setAttribute("mealList", MealsUtil.getFiltered(meals.getAll(), LocalTime.MIN, LocalTime.MAX, 2000));
-        request.getRequestDispatcher(MEAL_LIST).forward(request, response);
+        request.getRequestDispatcher(forwardTo).forward(request, response);
     }
 }
