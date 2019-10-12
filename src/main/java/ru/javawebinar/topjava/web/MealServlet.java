@@ -63,7 +63,7 @@ public class MealServlet extends HttpServlet {
             meals.update(Integer.parseInt(mealId), newMeal);
         }
 
-        setAttributeMealsAndForward(request, response, meals, MEAL_LIST);
+        response.sendRedirect("meals");
     }
 
     private void setAttributeMealsAndForward(HttpServletRequest request, HttpServletResponse response, MealDAO meals, String forwardTo) throws ServletException, IOException {
