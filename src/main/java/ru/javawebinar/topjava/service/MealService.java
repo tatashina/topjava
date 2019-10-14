@@ -22,16 +22,16 @@ public class MealService {
         this.repository = repository;
     }
 
-    public Meal create(Meal meal, int userId) {
-        return repository.save(meal, userId);
+    public Meal create(int userId, Meal meal) {
+        return repository.save(userId, meal);
     }
 
-    public void delete(int id, int userId) throws NotFoundException {
-        checkNotFoundWithId(repository.delete(id, userId), id);
+    public void delete(int userId, int id) throws NotFoundException {
+        checkNotFoundWithId(repository.delete(userId, id), id);
     }
 
-    public Meal get(int id, int userId) throws NotFoundException {
-        return checkNotFoundWithId(repository.get(id, userId), id);
+    public Meal get(int userId, int id) throws NotFoundException {
+        return checkNotFoundWithId(repository.get(userId, id), id);
     }
 
     public List<Meal> getAll(int userId) {
@@ -42,7 +42,7 @@ public class MealService {
         return new ArrayList<>(repository.getFilteredByDate(userId, startDate, endDate));
     }
 
-    public void update(Meal meal, int userId) throws NotFoundException {
-        checkNotFoundWithId(repository.save(meal, userId), meal.getId());
+    public void update(int userId, Meal meal) throws NotFoundException {
+        checkNotFoundWithId(repository.save(userId, meal), meal.getId());
     }
 }

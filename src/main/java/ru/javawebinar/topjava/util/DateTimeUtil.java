@@ -13,11 +13,11 @@ public class DateTimeUtil {
     }
 
     public static LocalDate toLocalDate(String localDate) {
-        return localDate.isEmpty() ? null : LocalDate.parse(localDate);
+        return localDate == null || localDate.isEmpty() ? null : LocalDate.parse(localDate);
     }
 
     public static LocalTime toLocalTime(String localTime) {
-        return localTime.isEmpty() ? null : LocalTime.parse(localTime);
+        return localTime == null || localTime.isEmpty() ? null : LocalTime.parse(localTime);
     }
 
     public static String toString(LocalDateTime ldt) {

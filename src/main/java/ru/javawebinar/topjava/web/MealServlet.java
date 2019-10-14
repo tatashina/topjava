@@ -34,26 +34,21 @@ public class MealServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         request.setCharacterEncoding("UTF-8");
-        String id = request.getParameter("id");
 
-        if (id.equals("filter")) {
-            request.setAttribute("meals", controller.getFiltered(
-                    DateTimeUtil.toLocalDate(request.getParameter("startDate")),
-                    DateTimeUtil.toLocalDate(request.getParameter("endDate")),
-                    DateTimeUtil.toLocalTime(request.getParameter("startTime")),
-                    DateTimeUtil.toLocalTime(request.getParameter("endTime"))));
+        Meal meal = new Meal(
+                LocalDateTime.parse(request.getParameter("dateTime")),
+                request.getParameter("description"),
+                Integer.parseInt(request.getParameter("calories")));
 
-            request.getRequestDispatcher("/meals.jsp").forward(request, response);
+        if (request.getParameter("id").isEmpty()) {
+            log.info("Create {}", meal);
+            controller.create(meal);
         } else {
-            Meal meal = new Meal(id.isEmpty() ? null : Integer.valueOf(id),
-                    LocalDateTime.parse(request.getParameter("dateTime")),
-                    request.getParameter("description"),
-                    Integer.parseInt(request.getParameter("calories")));
-
-            log.info(meal.isNew() ? "Create {}" : "Update {}", meal);
-            controller.update(meal);
-            response.sendRedirect("meals");
+            log.info("Update {}", meal);
+            controller.update(meal, getId(request));
         }
+
+        response.sendRedirect("meals");
     }
 
     @Override
@@ -78,7 +73,12 @@ public class MealServlet extends HttpServlet {
             case "all":
             default:
                 log.info("getAll");
-                request.setAttribute("meals", controller.getAll());
+                request.setAttribute("meals", controller.getFiltered(
+                        DateTimeUtil.toLocalDate(request.getParameter("startDate")),
+                        DateTimeUtil.toLocalDate(request.getParameter("endDate")),
+                        DateTimeUtil.toLocalTime(request.getParameter("startTime")),
+                        DateTimeUtil.toLocalTime(request.getParameter("endTime"))));
+
                 request.getRequestDispatcher("/meals.jsp").forward(request, response);
                 break;
         }

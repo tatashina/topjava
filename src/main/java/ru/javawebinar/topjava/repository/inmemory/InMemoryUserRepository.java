@@ -38,8 +38,7 @@ public class InMemoryUserRepository implements UserRepository {
     public List<User> getAll() {
         return repository.values()
                 .stream()
-                .sorted(Comparator.comparing(User::getName))
-                .sorted(Comparator.comparing(User::getId))
+                .sorted(Comparator.comparing(User::getName).thenComparing(User::getId))
                 .collect(Collectors.toList());
     }
 
