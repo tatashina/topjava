@@ -22,7 +22,8 @@
     <hr/>
     <h2>Meals</h2>
 
-    <form method="get" action="meals">
+    <form method="get">
+        <input type="hidden" name="action" value="filtered">
         От даты: <input type="date" name="startDate" value="${param.startDate}">
         До даты: <input type="date" name="endDate" value="${param.endDate}">
         От времени: <input type="time" name="startTime" value="${param.startTime}">

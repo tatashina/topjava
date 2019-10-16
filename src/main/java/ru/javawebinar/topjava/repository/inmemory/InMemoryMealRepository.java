@@ -31,7 +31,9 @@ public class InMemoryMealRepository implements MealRepository {
             return meal;
         }
 
-        return repository.get(userId).computeIfPresent(meal.getId(), (id, oldMeal) -> meal);
+        return repository
+                .computeIfAbsent(userId, key -> new HashMap<>())
+                .computeIfPresent(meal.getId(), (id, oldMeal) -> meal);
     }
 
     @Override
@@ -63,8 +65,8 @@ public class InMemoryMealRepository implements MealRepository {
 
         return userMeals != null ?
                 userMeals.values().stream()
-                        .sorted(Comparator.comparing(Meal::getDate).reversed())
                         .filter(filter)
+                        .sorted(Comparator.comparing(Meal::getDate).reversed())
                         .collect(Collectors.toList())
                 : Collections.emptyList();
     }

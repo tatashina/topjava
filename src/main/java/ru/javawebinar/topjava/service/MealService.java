@@ -35,11 +35,11 @@ public class MealService {
     }
 
     public List<Meal> getAll(int userId) {
-        return new ArrayList<>(repository.getAll(userId));
+        return repository.getAll(userId);
     }
 
     public List<Meal> getFilteredByDate(int userId, LocalDate startDate, LocalDate endDate) {
-        return new ArrayList<>(repository.getFilteredByDate(userId, startDate, endDate));
+        return repository.getFilteredByDate(userId, startDate, endDate);
     }
 
     public void update(int userId, Meal meal) throws NotFoundException {
