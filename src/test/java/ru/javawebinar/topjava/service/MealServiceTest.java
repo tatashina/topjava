@@ -91,5 +91,6 @@ public class MealServiceTest {
         Meal created = service.create(newMeal, ADMIN_ID);
         newMeal.setId(created.getId());
         assertMatch(service.getAll(ADMIN_ID), newMeal, ADMIN_MEAL_2, ADMIN_MEAL_1);
+        assertMatch(created, newMeal);
     }
 }
