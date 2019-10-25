@@ -37,7 +37,7 @@ public class MealServiceTest {
     @Rule
     public ExpectedException exception = ExpectedException.none();
 
-    private static final Logger logger = getLogger(MealServiceTest.class);
+    private static final Logger logger = getLogger("tests");
 
     private static StringBuilder resultTimeLog = new StringBuilder();
 
