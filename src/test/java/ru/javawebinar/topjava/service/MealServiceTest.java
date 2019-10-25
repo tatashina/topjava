@@ -43,8 +43,8 @@ public class MealServiceTest {
 
     private static void logInfo(Description description, String status, long nanos) {
         String testName = description.getMethodName();
-        String testTimeLog =  String.format("\nTest: %s, time: %d microseconds",
-                testName, TimeUnit.NANOSECONDS.toMicros(nanos));
+        String testTimeLog =  String.format("\nTest: %s, time: %d milliseconds",
+                testName, TimeUnit.NANOSECONDS.toMillis(nanos));
         resultTimeLog.append(testTimeLog);
         logger.info(testTimeLog);
     }
