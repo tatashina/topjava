@@ -82,13 +82,26 @@ class MealRestControllerTest extends AbstractControllerTest {
         assertMatch(mealService.get(newId, USER_ID), newMeal);
     }
 
+//    @Test
+//    public void getBetween() throws Exception {
+//        mockMvc.perform(MockMvcRequestBuilders.get(REST_URL + "filter?dateTimeStart=" + MEAL1.getDateTime() + "&dateTimeEnd=" + MEAL2.getDateTime()))
+//                .andDo(print())
+//                .andExpect(status().isOk())
+//                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+//                .andExpect(contentJsonTo(MealsUtil.getTos(List.of(MEAL2, MEAL1), SecurityUtil.authUserCaloriesPerDay())));
+//
+//    }
+
     @Test
     public void getBetween() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get(REST_URL + "filter?dateTimeStart=" + MEAL1.getDateTime() + "&dateTimeEnd=" + MEAL2.getDateTime()))
+        mockMvc.perform(MockMvcRequestBuilders.get(REST_URL
+                + "filter?startDate=" + MEAL1.getDate()
+                + "&startTime=" + MEAL1.getTime()
+                + "&endDate=" + MEAL2.getDate()))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(contentJsonTo(MealsUtil.getTos(List.of(MEAL2, MEAL1), SecurityUtil.authUserCaloriesPerDay())));
-
+                .andExpect(contentJsonTo(MealsUtil.getTos(List.of(MEAL3, MEAL2, MEAL1), SecurityUtil.authUserCaloriesPerDay())));
     }
+
 }
