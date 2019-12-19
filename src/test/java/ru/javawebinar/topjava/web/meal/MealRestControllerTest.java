@@ -114,4 +114,18 @@ class MealRestControllerTest extends AbstractControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(MEAL_TO_MATCHERS.contentJson(getTos(MEALS, USER.getCaloriesPerDay())));
     }
+
+    @Test
+    void createInvalid() throws Exception {
+        Meal meal = new Meal(null, null, "Invalid", 10000);
+        perform(doPut(MEAL1_ID).jsonBody(meal).basicAuth(USER))
+                .andExpect(status().isUnprocessableEntity());
+    }
+
+    @Test
+    void updateInvalid() throws Exception {
+        Meal meal = new Meal(MEAL1_ID, null, null, 10000);
+        perform(doPut(MEAL1_ID).jsonBody(meal).basicAuth(USER))
+                .andExpect(status().isUnprocessableEntity());
+    }
 }
